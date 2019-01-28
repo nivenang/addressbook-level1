@@ -566,18 +566,41 @@ public class AddressBook {
     }
 
     /**
+     * Checks if the address book is empty
+     *
+     * @return true if address book is empty, false otherwise
+     */
+    private static boolean isEmptyList() {
+        int size = ALL_PERSONS.size();
+        if (size < DISPLAYED_INDEX_OFFSET) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Deletes the last or most recently added person from the list.
      *
      * @return feedback display message for the operation result
      */
     private static String executeDeleteLastPerson() {
-        int size = ALL_PERSONS.size();
-        if (size < DISPLAYED_INDEX_OFFSET) {
+        if (isEmptyList()) {
             return MESSAGE_DELETE_EMPTY_LIST;
         }
-        String[] targetToDelete = ALL_PERSONS.get(size - DISPLAYED_INDEX_OFFSET);
-        return deletePersonFromAddressBook(targetToDelete) ? getMessageForSuccessfulDelete(targetToDelete) // success
+
+        String[] targetToDelete = getTargetToDelete();
+        return deletePersonFromAddressBook(getTargetToDelete()) ? getMessageForSuccessfulDelete(targetToDelete) // success
                 : MESSAGE_PERSON_NOT_IN_ADDRESSBOOK; // not found
+    }
+
+    /**
+     * Retrieves the contact to be deleted from the address book
+     *
+     * @return name of person to be deleted from address book
+     */
+    private static String[] getTargetToDelete() {
+        return ALL_PERSONS.get(ALL_PERSONS.size() - DISPLAYED_INDEX_OFFSET);
     }
 
     /**
