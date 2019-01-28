@@ -66,6 +66,9 @@
 || 	Parameters: INDEX
 || 	Example: delete 1
 || 
+|| deletelast: Deletes the last (most recently added) entry.
+|| 	Example: deletelast
+|| 
 || clear: Clears address book permanently.
 || 	Example: clear
 || 

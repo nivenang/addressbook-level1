@@ -71,6 +71,7 @@ public class AddressBook {
     private static final String MESSAGE_COMMAND_HELP_PARAMETERS = "\tParameters: %1$s";
     private static final String MESSAGE_COMMAND_HELP_EXAMPLE = "\tExample: %1$s";
     private static final String MESSAGE_DELETE_PERSON_SUCCESS = "Deleted Person: %1$s";
+    private static final String MESSAGE_DELETE_EMPTY_LIST = "Unable to delete from empty list";
     private static final String MESSAGE_DISPLAY_PERSON_DATA = "%1$s  Phone Number: %2$s  Email: %3$s";
     private static final String MESSAGE_DISPLAY_LIST_ELEMENT_INDEX = "%1$d. ";
     private static final String MESSAGE_GOODBYE = "Exiting Address Book... Good bye!";
@@ -120,6 +121,10 @@ public class AddressBook {
                                                     + "the last find/list call.";
     private static final String COMMAND_DELETE_PARAMETER = "INDEX";
     private static final String COMMAND_DELETE_EXAMPLE = COMMAND_DELETE_WORD + " 1";
+
+    private static final String COMMAND_DELETE_LAST_WORD = "deletelast";
+    private static final String COMMAND_DELETE_LAST_DESC = "Deletes the last (most recently added) entry.";
+    private static final String COMMAND_DELETE_LAST_EXAMPLE = COMMAND_DELETE_LAST_WORD;
 
     private static final String COMMAND_CLEAR_WORD = "clear";
     private static final String COMMAND_CLEAR_DESC = "Clears address book permanently.";
@@ -377,6 +382,8 @@ public class AddressBook {
             return executeListAllPersonsInAddressBook();
         case COMMAND_DELETE_WORD:
             return executeDeletePerson(commandArgs);
+        case COMMAND_DELETE_LAST_WORD:
+            return executeDeleteLastPerson();
         case COMMAND_CLEAR_WORD:
             return executeClearAddressBook();
         case COMMAND_HELP_WORD:
@@ -556,6 +563,21 @@ public class AddressBook {
      */
     private static String getMessageForSuccessfulDelete(String[] deletedPerson) {
         return String.format(MESSAGE_DELETE_PERSON_SUCCESS, getMessageForFormattedPersonData(deletedPerson));
+    }
+
+    /**
+     * Deletes the last or most recently added person from the list.
+     *
+     * @return feedback display message for the operation result
+     */
+    private static String executeDeleteLastPerson() {
+        int size = ALL_PERSONS.size();
+        if (size < DISPLAYED_INDEX_OFFSET) {
+            return MESSAGE_DELETE_EMPTY_LIST;
+        }
+        String[] targetToDelete = ALL_PERSONS.get(size - DISPLAYED_INDEX_OFFSET);
+        return deletePersonFromAddressBook(targetToDelete) ? getMessageForSuccessfulDelete(targetToDelete) // success
+                : MESSAGE_PERSON_NOT_IN_ADDRESSBOOK; // not found
     }
 
     /**
@@ -1086,6 +1108,7 @@ public class AddressBook {
                 + getUsageInfoForFindCommand() + LS
                 + getUsageInfoForViewCommand() + LS
                 + getUsageInfoForDeleteCommand() + LS
+                + getUsageInfoForDeleteLastCommand() + LS
                 + getUsageInfoForClearCommand() + LS
                 + getUsageInfoForExitCommand() + LS
                 + getUsageInfoForHelpCommand();
@@ -1110,6 +1133,12 @@ public class AddressBook {
         return String.format(MESSAGE_COMMAND_HELP, COMMAND_DELETE_WORD, COMMAND_DELETE_DESC) + LS
                 + String.format(MESSAGE_COMMAND_HELP_PARAMETERS, COMMAND_DELETE_PARAMETER) + LS
                 + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_DELETE_EXAMPLE) + LS;
+    }
+
+    /** Returns the string for showing 'deletelast' command usage instruction */
+    private static String getUsageInfoForDeleteLastCommand() {
+        return String.format(MESSAGE_COMMAND_HELP, COMMAND_DELETE_LAST_WORD, COMMAND_DELETE_LAST_DESC) + LS
+                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_DELETE_LAST_EXAMPLE) + LS;
     }
 
     /** Returns string for showing 'clear' command usage instruction */
